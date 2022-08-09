@@ -84,7 +84,9 @@ time4 = time.time()
 #print "predict done", time2 - time1, time4 - time3
 
 # Save estimated measures to /nii folder as nii image
-os.system("mkdir -p nii")
+# os.system("mkdir -p nii")
+# Modified for windows system
+os.system("mkdir nii")
 
 for i in range(ntypes):
     data = pred[..., i]

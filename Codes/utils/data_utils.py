@@ -5,6 +5,7 @@ Author: Ting Gong
 """
 
 import os
+import shutil
 import numpy as np
 from scipy.io import loadmat, savemat
 from utils.nii_utils import load_nii_image, save_nii_image, mask_nii_data
@@ -14,8 +15,11 @@ def gen_dMRI_fc1d_train_datasets(path, subject, ndwi, scheme, combine=None, whit
     Generate fc1d training Datasets.
     """
     ltype = ['FA' , 'MD']
-    os.system("mkdir -p datasets/data datasets/label datasets/mask")
-    os.system('cp ' +  path + '/' + subject + '/nodif_brain_mask.nii datasets/mask/mask_' + subject + '.nii')      
+    # os.system("mkdir -p datasets/data datasets/label datasets/mask")
+    # os.system('cp ' +  path + '/' + subject + '/nodif_brain_mask.nii datasets/mask/mask_' + subject + '.nii')
+    # Modified for compatibility with Windows
+    os.system('md ' + os.path.join('datasets', 'data') + ' ' + os.path.join('datasets', 'label') + ' ' + os.path.join('datasets', 'mask'))
+    shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + '.nii')
     mask = load_nii_image('datasets/mask/mask_' + subject + '.nii')
         
     # load diffusion data
@@ -129,6 +133,8 @@ def gen_dMRI_conv3d_train_datasets(subject, ndwi, scheme, patch_size, label_size
         data = data[offset:-offset, offset:-offset, :, :12]
 
     patches = gen_3d_patches(data, mask, patch_size, label_size)
+    patches = patches.reshape(patches.shape[0], -1)
+
     label = gen_3d_patches(label, mask, label_size, label_size)
 
     savemat('datasets/data/' + subject + '-' + str(ndwi) + '-' + scheme + '-' + '3d.mat', {'data':patches})
@@ -139,8 +145,11 @@ def gen_dMRI_test_datasets(path, subject, ndwi, scheme, combine=None,  fdata=Tru
     Generate testing Datasets.
     """
     ltype = ['FA' , 'MD']
-    os.system("mkdir -p datasets/data datasets/label datasets/mask")
-    os.system('cp ' +  path + '/' + subject + '/nodif_brain_mask.nii datasets/mask/mask_' + subject + '.nii')   
+    # os.system("mkdir -p datasets/data datasets/label datasets/mask")
+    # os.system('copy ' +  path + '/' + subject + '/nodif_brain_mask.nii datasets/mask/mask_' + subject + '.nii')
+    # Modified for compatibility with Windows
+    os.system('md ' + os.path.join('datasets', 'data') + ' ' + os.path.join('datasets', 'label') + ' ' + os.path.join('datasets', 'mask'))
+    shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + '.nii')
     mask = load_nii_image('datasets/mask/mask_' + subject + '.nii')
             
     if fdata:
@@ -195,6 +204,9 @@ def fetch_train_data_MultiSubject(subjects, model, ndwi, scheme):
 
     data = np.array(data_s)
     label = np.array(labels)
+
+    if model[:6] == 'conv3d':
+        data = data.reshape(data.shape[0], 3, 3, 3, -1)
 
     return data, label
 
