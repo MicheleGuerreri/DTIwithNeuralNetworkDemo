@@ -83,7 +83,7 @@ class MRIModel(object):
         for i in np.arange(self._layer - 1):
             hidden = Conv3D(self._kernel1, 1, activation='relu', padding='valid')(hidden)
         hidden = Dropout(0.1)(hidden)
-        outputs = Conv3D(2, 1, activation='relu', padding='valid')(hidden)
+        outputs = Conv3D(3, 1, activation='relu', padding='valid')(hidden)
 
         self._model = Model(inputs=inputs, outputs=outputs)
 
