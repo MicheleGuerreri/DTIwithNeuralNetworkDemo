@@ -238,5 +238,5 @@ def repack_pred_label(pred, mask, model, ntype):
     else:
         label = pred.reshape(label.shape)
     
-    label[:,:,:,1]=label[:,:,:,1]/1000 # scale MD back while saving nii
+    #label[:,:,:,1]=label[:,:,:,1]/1000 # scale MD back while saving nii
     return label
