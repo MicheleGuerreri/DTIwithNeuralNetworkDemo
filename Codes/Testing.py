@@ -26,8 +26,17 @@ args = parser().parse_args()
 train_subjects = args.train_subjects
 test_subject = args.test_subject[0]
 nDWI = args.DWI
-scheme = args.scheme
+scheme = "first"
 mtype = args.model
+
+# determin the input volumes using a scheme file
+combine = None
+schemefile = args.scheme
+if schemefile is not None:
+    combine = np.loadtxt('schemes/' + schemefile)
+    combine = combine.astype(int)
+    nDWI = combine.sum()
+    scheme = schemefile
 
 lr = args.lr
 epochs = args.epoch
