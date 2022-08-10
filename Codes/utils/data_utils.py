@@ -14,7 +14,7 @@ def gen_dMRI_fc1d_train_datasets(path, subject, ndwi, scheme, combine=None, whit
     """
     Generate fc1d training Datasets.
     """
-    ltype = ['FA' , 'MD']
+    ltype = ['NDI' , 'FWF', 'ODI']
     # os.system("mkdir -p datasets/data datasets/label datasets/mask")
     # os.system('cp ' +  path + '/' + subject + '/nodif_brain_mask.nii datasets/mask/mask_' + subject + '.nii')
     # Modified for compatibility with Windows
@@ -38,17 +38,17 @@ def gen_dMRI_fc1d_train_datasets(path, subject, ndwi, scheme, combine=None, whit
 
     # load labels
     label = np.zeros((data.shape[0] , len(ltype)))
-    #for i in range(len(ltype)):
-    #    filename = path + '/' + subject + '/' + subject + '_' + ltype[i] + '.nii'
-    #    temp = load_nii_image(filename,mask) 
-    #    label[:, i] = temp.reshape(temp.shape[0])  
-    filename = path + '/' + subject + '/' + subject + '_' + ltype[0] + '.nii'
-    temp = load_nii_image(filename,mask)
-    label[:, 0] = temp.reshape(temp.shape[0]) 
+    for i in range(len(ltype)):
+        filename = path + '/' + subject + '/' + subject + '_' + ltype[i] + '.nii'
+        temp = load_nii_image(filename,mask)
+        label[:, i] = temp.reshape(temp.shape[0])
+    #filename = path + '/' + subject + '/' + subject + '_' + ltype[0] + '.nii'
+    #temp = load_nii_image(filename,mask)
+    #label[:, 0] = temp.reshape(temp.shape[0])
 
-    filename = path + '/' + subject + '/' + subject + '_' + ltype[1] + '.nii'
-    temp = load_nii_image(filename,mask) * 1000   # scale MD to the value around 1
-    label[:, 1] = temp.reshape(temp.shape[0]) 
+    #filename = path + '/' + subject + '/' + subject + '_' + ltype[1] + '.nii'
+    #temp = load_nii_image(filename,mask) * 1000   # scale MD to the value around 1
+    #label[:, 1] = temp.reshape(temp.shape[0])
      
     print(label.shape)
 
@@ -144,7 +144,7 @@ def gen_dMRI_test_datasets(path, subject, ndwi, scheme, combine=None,  fdata=Tru
     """
     Generate testing Datasets.
     """
-    ltype = ['FA' , 'MD']
+    ltype = ['NDI' , 'FWF', 'ODI']
     # os.system("mkdir -p datasets/data datasets/label datasets/mask")
     # os.system('copy ' +  path + '/' + subject + '/nodif_brain_mask.nii datasets/mask/mask_' + subject + '.nii')
     # Modified for compatibility with Windows
@@ -170,10 +170,13 @@ def gen_dMRI_test_datasets(path, subject, ndwi, scheme, combine=None,  fdata=Tru
 
     if flabel:
         label = np.zeros(mask.shape + (len(ltype),))
-        filename = path + '/' + subject + '/' + subject + '_' + ltype[0] + '.nii'
-        label[:, :, :, 0] = load_nii_image(filename)
-        filename = path + '/' + subject + '/' + subject + '_' + ltype[1] + '.nii'
-        label[:, :, :, 1] = load_nii_image(filename) * 1000   # scale MD to the value around 1  
+        for i in range(len(ltype)):
+            filename = path + '/' + subject + '/' + subject + '_' + ltype[i] + '.nii'
+            label[:, :, :, i] = load_nii_image(filename)
+        #filename = path + '/' + subject + '/' + subject + '_' + ltype[0] + '.nii'
+        #label[:, :, :, 0] = load_nii_image(filename)
+        #filename = path + '/' + subject + '/' + subject + '_' + ltype[1] + '.nii'
+        #label[:, :, :, 1] = load_nii_image(filename) * 1000   # scale MD to the value around 1
         print(label.shape)
         savemat('datasets/label/' + subject+ '-' + str(ndwi) + '-' + scheme + '.mat', {'label':label})
 

@@ -53,7 +53,7 @@ class MRIModel(object):
         hidden = Dropout(0.1)(hidden)
 
         # Define output layer
-        outputs = Dense(2, name='output', activation='relu')(hidden)
+        outputs = Dense(3, name='output', activation='relu')(hidden)
 
         self._model = Model(inputs=inputs, outputs=outputs)
 

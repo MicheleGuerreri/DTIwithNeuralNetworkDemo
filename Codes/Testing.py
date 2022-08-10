@@ -41,7 +41,7 @@ label_size = patch_size - 2
 base = args.base
 
 # Constants
-types = ['FA' , 'MD']
+types = ['NDI' , 'FWF', 'ODI']
 ntypes = len(types)
 decay = 0.1
 

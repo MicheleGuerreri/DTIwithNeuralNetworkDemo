@@ -45,7 +45,7 @@ base = args.base
 savename = str(nDWI)+ '-'  + scheme + '-' + args.model
 
 # Constants
-types = ['FA' , 'MD']
+types = ['NDI' , 'FWF', 'ODI']
 ntypes = len(types)
 decay = 0.1
 
