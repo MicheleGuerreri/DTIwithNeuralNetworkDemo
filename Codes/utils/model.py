@@ -166,7 +166,7 @@ def parser():
     # Specify train & test sets
     parser.add_argument("--train_subjects", help="Training subjects IDs", nargs='*')
     parser.add_argument("--test_subject", help="Testing subject ID", nargs='*')
-    parser.add_argument("--scheme", metavar='name', help="The scheme for sampling", default='first')
+    parser.add_argument("--scheme", metavar='name', help="The scheme for sampling")
     parser.add_argument("--DWI", metavar='N', help="Number of input DWI volumes", type=int, default=60)
   
    # Training parameters
