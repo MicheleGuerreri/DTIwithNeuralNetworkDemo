@@ -29,6 +29,15 @@ nDWI = args.DWI
 scheme = "first"
 mtype = args.model
 train = args.train
+out_path = args.out
+
+# define output path for tensorboard
+if out_path is not None:
+    tb_out = os.path.join(out_path,'logs')
+    if not os.path.isdir(out_path):
+        os.system("mkdir " + out_path)
+else:
+    tb_out = 'logs'
 
 # determin the input volumes using a scheme file
 combine = None
@@ -78,10 +87,10 @@ if train:
     data, label = fetch_train_data_MultiSubject(train_subjects, mtype, nDWI, scheme)
     # Reduce learning rate when a metric has stopped improving.
     reduce_lr = ReduceLROnPlateau(monitor="loss", factor=0.5, patience=10, epsilon=0.0001)
-    tensorboard = TensorBoard(histogram_freq=0)
+    tensorboard = TensorBoard(log_dir=tb_out, histogram_freq=0)
     early_stop = EarlyStopping(monitor='val_loss', patience=30, min_delta=0.0000005)
 
     [nepoch, output_loss, y_loss, output_accuracy, y_accuracy] = model.train(data, label, batch_size, epochs,
                                                                    [reduce_lr, tensorboard, early_stop],
-                                                                   savename, shuffle=not shuffle,
+                                                                   savename, out_path, shuffle=not shuffle,
                                                                    validation_data=None)

@@ -28,6 +28,7 @@ test_subject = args.test_subject[0]
 nDWI = args.DWI
 scheme = "first"
 mtype = args.model
+out_path = args.out
 
 # determin the input volumes using a scheme file
 combine = None
@@ -77,7 +78,7 @@ if test_shape is None:
 # Define the model
 model = MRIModel(nDWI, model=mtype, layer=layer, train=False, kernels=kernels, test_shape=test_shape)
 model.model(adam, loss_func, patch_size)
-model.load_weight(savename)
+model.load_weight(savename, out_path)
 
 weights = model._model.layers[1].get_weights()
 
@@ -95,11 +96,19 @@ time4 = time.time()
 # Save estimated measures to /nii folder as nii image
 # os.system("mkdir -p nii")
 # Modified for windows system
-os.system("mkdir nii")
+if out_path is not None:
+    nii_out = os.path.join(out_path, 'nii')
+else:
+    nii_out = 'nii'
+if not os.path.isdir(nii_out):
+    os.system("mkdir " + nii_out)
 
 for i in range(ntypes):
     data = pred[..., i]
-    filename = 'nii/' + test_subject + '-' + types[i] + '-' + savename + '.nii'
+    if out_path is not None:
+        filename = os.path.join(nii_out, test_subject + '-' + types[i] + '-' + savename + '.nii')
+    else:
+        filename = os.path.join(nii_out, test_subject + '-' + types[i] + '-' + savename + '.nii')
 
     data[mask == 0] = 0
     save_nii_image(filename, data, 'datasets/mask/mask_' + test_subject + '.nii', None)

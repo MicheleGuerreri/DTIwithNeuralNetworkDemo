@@ -124,7 +124,7 @@ class MRIModel(object):
         'conv3d' : _sequence_train,
     }
 
-    def train(self, data, label, nbatch, epochs, callbacks, weightname,
+    def train(self, data, label, nbatch, epochs, callbacks, weightname, out_path,
               shuffle=True, validation_data=None):
         """
         Training on training datasets.
@@ -133,19 +133,32 @@ class MRIModel(object):
         self.__train[self._type](self, data, label, nbatch, epochs,
                                  callbacks, shuffle, validation_data)
 
+        # define the output name and path
+        if out_path is not None:
+            out_train = os.path.join(out_path, 'weights',  weightname + '.weights')
+        else:
+            out_train = os.path.join('weights', weightname + '.weights')
+
         try:
-            self._model.save_weights('weights/' + weightname + '.weights')
+            self._model.save_weights(out_train)
         except IOError:
             os.system('mkdir weights')
-            self._model.save_weights('weights/' + weightname + '.weights')
+            self._model.save_weights(out_train)
 
         return self._loss
 
-    def load_weight(self, weightname):
+    def load_weight(self, weightname, out_path):
         """
         Load pre-trained weights.
         """
-        self._model.load_weights('weights/' + weightname + '.weights')
+
+        # define the output name and path
+        if out_path is not None:
+            out_train = os.path.join(out_path, 'weights', weightname + '.weights')
+        else:
+            out_train = os.path.join('weights', weightname + '.weights')
+
+        self._model.load_weights(out_train)
 
     def predict(self, data):
         """
@@ -168,6 +181,7 @@ def parser():
     parser.add_argument("--test_subject", help="Testing subject ID", nargs='*')
     parser.add_argument("--scheme", metavar='name', help="The scheme for sampling")
     parser.add_argument("--DWI", metavar='N', help="Number of input DWI volumes", type=int, default=60)
+    parser.add_argument("--out", metavar='o', help="Specify out path", type=str, default=None)
   
    # Training parameters
     parser.add_argument("--train", help="Train the network", action="store_true")
