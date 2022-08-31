@@ -135,15 +135,27 @@ class MRIModel(object):
 
         # define the output name and path
         if out_path is not None:
-            out_train = os.path.join(out_path, 'weights',  weightname + '.weights')
+            weights_path = os.path.join(out_path, 'weights')
+            this_dir = os.getcwdb()
+            #out_train = os.path.join(weights_path,  weightname + '.weights')
         else:
-            out_train = os.path.join('weights', weightname + '.weights')
+            weights_path = os.path.join('weights')
+            this_dir = '..'
+            #out_train = os.path.join(weights_path, weightname + '.weights')
+
+        if not os.path.isdir(weights_path):
+            os.system("mkdir " + weights_path)
 
         try:
-            self._model.save_weights(out_train)
+            os.chdir(weights_path)
+            # self._model.save_weights(weightname + '.weights')
+            self._model.save_weights(weightname)
+            os.chdir(this_dir)
         except IOError:
+            # If I get error try to save results anyway...
             os.system('mkdir weights')
-            self._model.save_weights(out_train)
+            #self._model.save_weights(os.path.join('weights', weightname + '.weights'))
+            self._model.save_weights(os.path.join('weights', weightname))
 
         return self._loss
 
@@ -154,9 +166,11 @@ class MRIModel(object):
 
         # define the output name and path
         if out_path is not None:
-            out_train = os.path.join(out_path, 'weights', weightname + '.weights')
+            #out_train = os.path.join(out_path, 'weights', weightname + '.weights')
+            out_train = os.path.join(out_path, 'weights', weightname)
         else:
-            out_train = os.path.join('weights', weightname + '.weights')
+            #out_train = os.path.join('weights', weightname + '.weights')
+            out_train = os.path.join('weights', weightname)
 
         self._model.load_weights(out_train)
 
