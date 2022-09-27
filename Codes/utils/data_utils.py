@@ -19,6 +19,8 @@ def gen_dMRI_fc1d_train_datasets(path, subject, ndwi, scheme, combine=None, whit
     # os.system('cp ' +  path + '/' + subject + '/nodif_brain_mask.nii datasets/mask/mask_' + subject + '.nii')
     # Modified for compatibility with Windows
     #os.system('md ' + os.path.join('datasets', 'data') + ' ' + os.path.join('datasets', 'label') + ' ' + os.path.join('datasets', 'mask'))
+    if not os.path.isdir('datasets'):
+        os.mkdir('datasets')
     if not os.path.isdir(os.path.join('datasets', 'data')):
         os.mkdir(os.path.join('datasets', 'data'))
     if not os.path.isdir(os.path.join('datasets', 'label')):
@@ -155,6 +157,8 @@ def gen_dMRI_test_datasets(path, subject, ndwi, scheme, combine=None,  fdata=Tru
     # os.system('copy ' +  path + '/' + subject + '/nodif_brain_mask.nii datasets/mask/mask_' + subject + '.nii')
     # Modified for compatibility with Windows
     #os.system('md ' + os.path.join('datasets', 'data') + ' ' + os.path.join('datasets', 'label') + ' ' + os.path.join('datasets', 'mask'))
+    if not os.path.isdir('datasets'):
+        os.mkdir('datasets')
     if not os.path.isdir(os.path.join('datasets', 'data')):
         os.mkdir(os.path.join('datasets', 'data'))
     if not os.path.isdir(os.path.join('datasets', 'label')):
