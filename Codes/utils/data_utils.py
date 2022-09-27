@@ -148,7 +148,13 @@ def gen_dMRI_test_datasets(path, subject, ndwi, scheme, combine=None,  fdata=Tru
     # os.system("mkdir -p datasets/data datasets/label datasets/mask")
     # os.system('copy ' +  path + '/' + subject + '/nodif_brain_mask.nii datasets/mask/mask_' + subject + '.nii')
     # Modified for compatibility with Windows
-    os.system('md ' + os.path.join('datasets', 'data') + ' ' + os.path.join('datasets', 'label') + ' ' + os.path.join('datasets', 'mask'))
+    #os.system('md ' + os.path.join('datasets', 'data') + ' ' + os.path.join('datasets', 'label') + ' ' + os.path.join('datasets', 'mask'))
+    if not os.path.isdir(os.path.join('datasets', 'data')):
+        os.mkdir(os.path.join('datasets', 'data'))
+    if not os.path.isdir(os.path.join('datasets', 'label')):
+        os.mkdir(os.path.join('datasets', 'label'))
+    if not os.path.isdir(os.path.join('datasets', 'mask')):
+        os.mkdir(os.path.join('datasets', 'mask'))
     shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + '.nii')
     mask = load_nii_image('datasets/mask/mask_' + subject + '.nii')
             
