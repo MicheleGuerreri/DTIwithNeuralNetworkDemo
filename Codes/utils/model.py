@@ -206,6 +206,8 @@ def parser():
     parser.add_argument("--epoch", metavar='ep', help="Number of epoches", type=int, default=100)
     parser.add_argument("--kernels", help="The number of kernels for each layer", nargs='*',
                         type=int, default=None)
+    parser.add_argument("--rseed", metavar='rs', help="Random seed", type=int, default=None)
+    parser.add_argument("--shuffle", metavar='sh', help="Shuffle training data", type=bool, default=False)
         
     # Just For test; not use anymore
     parser.add_argument("--loss", help="Set different loss functions", action="store_true")

@@ -7,10 +7,11 @@ Author: Ting Gong
 
 import numpy as np
 import os
+import random as rnd
 import time
 
 from scipy.io import savemat
-
+from tensorflow import random, experimental
 from tensorflow.keras.optimizers import SGD, Adam
 from tensorflow.keras.models import save_model, load_model
 from tensorflow.keras.callbacks import ReduceLROnPlateau, TensorBoard, \
@@ -18,7 +19,6 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau, TensorBoard, \
 
 from utils import save_nii_image, calc_RMSE, loss_func, repack_pred_label, \
                   MRIModel, parser, load_nii_image, unmask_nii_data, loss_funcs, fetch_train_data_MultiSubject
-
 
 # Get parameter from command-line input
 args = parser().parse_args()
@@ -30,6 +30,20 @@ scheme = "first"
 mtype = args.model
 train = args.train
 out_path = args.out
+
+# Get random seed
+rseed = args.rseed
+# Set random seed
+if rseed is not None:
+    rnd.seed(rseed)
+    np.random.seed(rseed)
+    random.set_seed(rseed)
+    # experimental.numpy.random.seed(rseed)
+    os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
+    os.environ['TF_DETERMINISTIC_OPS'] = '1'
+    # Set a fixed value for the hash seed
+    os.environ["PYTHONHASHSEED"] = str(rseed)
+    print(f"Random seed set as {rseed}")
 
 # define output path for tensorboard
 if out_path is not None:
@@ -67,7 +81,7 @@ types = ['NDI' , 'FWF', 'ODI']
 ntypes = len(types)
 decay = 0.1
 
-shuffle = False
+shuffle = args.shuffle
 y_accuracy = None
 output_accuracy = None
 y_loss = None
@@ -84,6 +98,7 @@ if train:
 
     model.model(adam, loss_funcs[loss], patch_size)
 
+
     data, label = fetch_train_data_MultiSubject(train_subjects, mtype, nDWI, scheme)
     # Reduce learning rate when a metric has stopped improving.
     reduce_lr = ReduceLROnPlateau(monitor="loss", factor=0.5, patience=10, epsilon=0.0001)
@@ -92,5 +107,5 @@ if train:
 
     [nepoch, output_loss, y_loss, output_accuracy, y_accuracy] = model.train(data, label, batch_size, epochs,
                                                                    [reduce_lr, tensorboard, early_stop],
-                                                                   savename, out_path, shuffle=not shuffle,
+                                                                   savename, out_path, shuffle=shuffle,
                                                                    validation_data=None)
