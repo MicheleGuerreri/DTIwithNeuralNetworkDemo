@@ -9,6 +9,7 @@ import shutil
 import numpy as np
 from scipy.io import loadmat, savemat
 from utils.nii_utils import load_nii_image, save_nii_image, mask_nii_data
+import matplotlib.pyplot as plt
 
 def gen_dMRI_fc1d_train_datasets(path, subject, ndwi, scheme, combine=None, whiten=True):
     """
@@ -196,7 +197,7 @@ def gen_dMRI_test_datasets(path, subject, ndwi, scheme, combine=None,  fdata=Tru
         print(label.shape)
         savemat('datasets/label/' + subject+ '-' + str(ndwi) + '-' + scheme + '.mat', {'label':label})
 
-def fetch_train_data_MultiSubject(subjects, model, ndwi, scheme):
+def fetch_train_data_MultiSubject(subjects, model, ndwi, scheme, data_shuffle):
     """
     #Fetch train data.
     """
@@ -223,6 +224,19 @@ def fetch_train_data_MultiSubject(subjects, model, ndwi, scheme):
 
     data = np.array(data_s)
     label = np.array(labels)
+
+    # check data distribution
+    # fig1, (ax0, ax1, ax2) = plt.subplots(nrows=1, ncols=3)
+    # ax0.hist(label[:1043864, 0], bins=200)
+    # ax1.hist(label[:1043864, 1], bins=200)
+    # ax2.hist(label[:1043864, 2], bins=200)
+
+    # check if we need to shuffle the data
+    if data_shuffle:
+        data, label = shuffle_data(data, label.reshape(label.shape[0], label.shape[-1]))
+        if model[:6] == 'conv3d':
+            label = label.reshape(label.shape[0], 1, 1, 1, -1)
+
 
     if model[:6] == 'conv3d':
         data = data.reshape(data.shape[0], 3, 3, 3, -1)

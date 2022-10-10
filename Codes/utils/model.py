@@ -207,8 +207,10 @@ def parser():
     parser.add_argument("--kernels", help="The number of kernels for each layer", nargs='*',
                         type=int, default=None)
     parser.add_argument("--rseed", metavar='rs', help="Random seed", type=int, default=None)
-    parser.add_argument("--shuffle", metavar='sh', help="Shuffle training data", type=bool, default=False)
-        
+    parser.add_argument("--train_shuffle", metavar='sh', help="Shuffle at each epoch", type=bool, default=False)
+    parser.add_argument("--data_shuffle", metavar='sh', help="Shuffle data before training/validation", type=bool, default=False)
+    parser.add_argument("--patience", metavar='sh', help="patience", type=int, default=1000)
+
     # Just For test; not use anymore
     parser.add_argument("--loss", help="Set different loss functions", action="store_true")
     parser.add_argument("--test_shape", nargs='*', type=int, default=None)

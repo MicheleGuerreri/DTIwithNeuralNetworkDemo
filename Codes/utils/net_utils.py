@@ -7,6 +7,11 @@ import numpy as np
 #from tensorflow.contrib.keras.api.keras import backend as K
 from tensorflow.keras import backend as K
 
+from tensorflow import random
+import os
+import random as rnd
+
+
 
 def loss_func(y_true, y_pred):
     """
@@ -140,3 +145,14 @@ def calc_ssim(a, b):
     #BB = ((a.mean() ** 2) + (b.mean()) ** 2) * ((np.std(a) ** 2) + (np.std(b) ** 2))
 
     return lxy * cxy * sxy
+
+def set_randomness(rseed):
+    rnd.seed(rseed)
+    np.random.seed(rseed)
+    random.set_seed(rseed)
+    # experimental.numpy.random.seed(rseed)
+    os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
+    os.environ['TF_DETERMINISTIC_OPS'] = '1'
+    # Set a fixed value for the hash seed
+    os.environ["PYTHONHASHSEED"] = str(rseed)
+    print(f"Random seed set as {rseed}")
