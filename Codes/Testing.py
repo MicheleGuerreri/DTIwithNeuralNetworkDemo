@@ -51,7 +51,7 @@ label_size = patch_size - 2
 base = args.base
 
 # Constants
-types = ['NDI' , 'FWF', 'ODI']
+types = args.types
 ntypes = len(types)
 decay = 0.1
 
@@ -76,7 +76,7 @@ if test_shape is None:
   test_shape = tdata.shape[1:4]
 
 # Define the model
-model = MRIModel(nDWI, model=mtype, layer=layer, train=False, kernels=kernels, test_shape=test_shape)
+model = MRIModel(nDWI, model=mtype, layer=layer, train=False, kernels=kernels, ntypes=ntypes, test_shape=test_shape)
 model.model(adam, loss_func, patch_size)
 model.load_weight(savename, out_path)
 

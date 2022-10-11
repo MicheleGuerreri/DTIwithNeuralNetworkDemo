@@ -68,7 +68,7 @@ base = args.base
 savename = str(nDWI)+ '-'  + scheme + '-' + args.model
 
 # Constants
-types = ['NDI' , 'FWF', 'ODI']
+types = args.types
 ntypes = len(types)
 decay = 0.1
 
@@ -89,7 +89,7 @@ adam = Adam(lr=lr, beta_1=0.9, beta_2=0.999, epsilon=1e-8)
 # Train on the training data.
 if train:
     # Define the model.
-    model = MRIModel(nDWI, model=mtype, layer=layer, train=train, kernels=kernels)
+    model = MRIModel(nDWI, model=mtype, layer=layer, train=train, kernels=kernels, ntypes=ntypes)
 
     model.model(adam, loss_funcs[loss], patch_size)
 

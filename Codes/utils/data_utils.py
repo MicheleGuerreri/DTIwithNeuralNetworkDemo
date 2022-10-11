@@ -11,11 +11,15 @@ from scipy.io import loadmat, savemat
 from utils.nii_utils import load_nii_image, save_nii_image, mask_nii_data
 import matplotlib.pyplot as plt
 
-def gen_dMRI_fc1d_train_datasets(path, subject, ndwi, scheme, combine=None, whiten=True):
+def gen_dMRI_fc1d_train_datasets(path, subject, ndwi, scheme, labels, dwi_path, mask_path, combine=None, whiten=True):
     """
     Generate fc1d training Datasets.
     """
-    ltype = ['NDI' , 'FWF', 'ODI']
+    if labels is not None:
+        ltype = labels
+    else:
+        ltype = ['NDI' , 'FWF', 'ODI']
+
     # os.system("mkdir -p datasets/data datasets/label datasets/mask")
     # os.system('cp ' +  path + '/' + subject + '/nodif_brain_mask.nii datasets/mask/mask_' + subject + '.nii')
     # Modified for compatibility with Windows
@@ -28,11 +32,19 @@ def gen_dMRI_fc1d_train_datasets(path, subject, ndwi, scheme, combine=None, whit
         os.mkdir(os.path.join('datasets', 'label'))
     if not os.path.isdir(os.path.join('datasets', 'mask')):
         os.mkdir(os.path.join('datasets', 'mask'))
-    shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + '.nii')
+
+    # Copy and load the mask
+    if mask_path is not None:
+        shutil.copy(path + '/' + subject + '/' + mask_path, 'datasets/mask/mask_' + subject + '.nii')
+    else:
+        shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + '.nii')
     mask = load_nii_image('datasets/mask/mask_' + subject + '.nii')
         
     # load diffusion data
-    data = load_nii_image(path + '/' + subject + '/diffusion.nii', mask)
+    if dwi_path is not None:
+        data = load_nii_image(path + '/' + subject + '/' + dwi_path, mask)
+    else:
+        data = load_nii_image(path + '/' + subject + '/diffusion.nii', mask)
     
     # Select the inputs.
     if combine is not None:
@@ -48,7 +60,10 @@ def gen_dMRI_fc1d_train_datasets(path, subject, ndwi, scheme, combine=None, whit
     # load labels
     label = np.zeros((data.shape[0] , len(ltype)))
     for i in range(len(ltype)):
-        filename = path + '/' + subject + '/' + subject + '_' + ltype[i] + '.nii'
+        if labels is not None:
+            filename = path + '/' + subject + '/' + ltype[i]
+        else:
+            filename = path + '/' + subject + '/' + subject + '_' + ltype[i] + '.nii'
         temp = load_nii_image(filename,mask)
         label[:, i] = temp.reshape(temp.shape[0])
     #filename = path + '/' + subject + '/' + subject + '_' + ltype[0] + '.nii'
@@ -149,11 +164,15 @@ def gen_dMRI_conv3d_train_datasets(subject, ndwi, scheme, patch_size, label_size
     savemat('datasets/data/' + subject + '-' + str(ndwi) + '-' + scheme + '-' + '3d.mat', {'data':patches})
     savemat('datasets/label/' + subject + '-' + str(ndwi) + '-' + scheme + '-' + '3d.mat', {'label':label})
 
-def gen_dMRI_test_datasets(path, subject, ndwi, scheme, combine=None,  fdata=True, flabel=True, whiten=True):
+def gen_dMRI_test_datasets(path, subject, ndwi, scheme, labels, dwi_path, mask_path, combine=None,  fdata=True, flabel=True, whiten=True):
     """
     Generate testing Datasets.
     """
-    ltype = ['NDI' , 'FWF', 'ODI']
+    if labels is not None:
+        ltype = labels
+    else:
+        ltype = ['NDI' , 'FWF', 'ODI']
+
     # os.system("mkdir -p datasets/data datasets/label datasets/mask")
     # os.system('copy ' +  path + '/' + subject + '/nodif_brain_mask.nii datasets/mask/mask_' + subject + '.nii')
     # Modified for compatibility with Windows
@@ -166,11 +185,20 @@ def gen_dMRI_test_datasets(path, subject, ndwi, scheme, combine=None,  fdata=Tru
         os.mkdir(os.path.join('datasets', 'label'))
     if not os.path.isdir(os.path.join('datasets', 'mask')):
         os.mkdir(os.path.join('datasets', 'mask'))
-    shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + '.nii')
+
+        # Copy and load the mask
+    if mask_path is not None:
+        shutil.copy(path + '/' + subject + '/' + mask_path, 'datasets/mask/mask_' + subject + '.nii')
+    else:
+        shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + '.nii')
     mask = load_nii_image('datasets/mask/mask_' + subject + '.nii')
             
     if fdata:
-        data = load_nii_image(path + '/' + subject + '/diffusion.nii')
+        # load diffusion data
+        if dwi_path is not None:
+            data = load_nii_image(path + '/' + subject + '/' + dwi_path)
+        else:
+            data = load_nii_image(path + '/' + subject + '/diffusion.nii')
         
         # Select the inputs.
         if combine is not None:
@@ -188,7 +216,10 @@ def gen_dMRI_test_datasets(path, subject, ndwi, scheme, combine=None,  fdata=Tru
     if flabel:
         label = np.zeros(mask.shape + (len(ltype),))
         for i in range(len(ltype)):
-            filename = path + '/' + subject + '/' + subject + '_' + ltype[i] + '.nii'
+            if labels is not None:
+                filename = path + '/' + subject + '/' + ltype[i]
+            else:
+                filename = path + '/' + subject + '/' + subject + '_' + ltype[i] + '.nii'
             label[:, :, :, i] = load_nii_image(filename)
         #filename = path + '/' + subject + '/' + subject + '_' + ltype[0] + '.nii'
         #label[:, :, :, 0] = load_nii_image(filename)

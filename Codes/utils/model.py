@@ -30,12 +30,13 @@ class MRIModel(object):
     _kernel2 = 150
     _kernel3 = 150
 
-    def __init__(self, ndwi=96, model='fc1d', layer=3, train=True, kernels=None, test_shape=[90, 90, 90]):
+    def __init__(self, ndwi=96, model='fc1d', layer=3, train=True, kernels=None, ntypes=3, test_shape=[90, 90, 90]):
         self._ndwi = ndwi
         self._type = model
         self._hist = None
         self._train = train
         self._layer = layer
+        self._ntypes = ntypes
         self._test_shape = test_shape
         if kernels is not None:
             self._kernel1, self._kernel2, self._kernel3 = kernels
@@ -53,7 +54,7 @@ class MRIModel(object):
         hidden = Dropout(0.1)(hidden)
 
         # Define output layer
-        outputs = Dense(3, name='output', activation='relu')(hidden)
+        outputs = Dense(self._ntypes, name='output', activation='relu')(hidden)
 
         self._model = Model(inputs=inputs, outputs=outputs)
 
@@ -83,7 +84,7 @@ class MRIModel(object):
         for i in np.arange(self._layer - 1):
             hidden = Conv3D(self._kernel1, 1, activation='relu', padding='valid')(hidden)
         hidden = Dropout(0.1)(hidden)
-        outputs = Conv3D(3, 1, activation='relu', padding='valid')(hidden)
+        outputs = Conv3D(self._ntypes, 1, activation='relu', padding='valid')(hidden)
 
         self._model = Model(inputs=inputs, outputs=outputs)
 
@@ -195,6 +196,7 @@ def parser():
     parser.add_argument("--test_subject", help="Testing subject ID", nargs='*')
     parser.add_argument("--scheme", metavar='name', help="The scheme for sampling")
     parser.add_argument("--DWI", metavar='N', help="Number of input DWI volumes", type=int, default=60)
+    parser.add_argument("--types", metavar='t', help="Type of input labels", nargs='*', default=['NDI' , 'FWF', 'ODI'])
     parser.add_argument("--out", metavar='o', help="Specify out path", type=str, default=None)
   
    # Training parameters

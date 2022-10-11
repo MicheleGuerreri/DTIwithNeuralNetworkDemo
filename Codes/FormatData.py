@@ -40,6 +40,10 @@ parser.add_argument("--conv2d_train", help="generate 2d patches for training", a
 parser.add_argument("--conv3d_train", help="generate 3d patches for training", action="store_true")
 parser.add_argument("--test", help="generate base data for testing", action="store_true")
 parser.add_argument("--Nolabel", help="generate data without labels for testing only", action="store_true")
+parser.add_argument("--labels", help="Set a specific input labels", nargs='*', default=None)
+parser.add_argument("--dwi", help="Set a specific dwi image", default=None)
+parser.add_argument("--mask", help="Set a specific mask image", default=None)
+
 
 args = parser.parse_args()
 
@@ -53,6 +57,11 @@ conv2d_train = args.conv2d_train
 conv3d_train = args.conv3d_train
 patch_size = 3
 label_size = 1
+
+# specific input labels
+labels = args.labels
+dwi = args.dwi
+mask = args.mask
 
 # determin the input volumes using the first n volumes
 nDWI = args.nDWI
@@ -70,21 +79,21 @@ if schemefile is not None:
 if test:
     for subject in subjects:
         if Nolabel:
-            gen_dMRI_test_datasets(path, subject, nDWI, scheme, combine, fdata=True, flabel=False, whiten=True)
+            gen_dMRI_test_datasets(path, subject, nDWI, scheme, labels, dwi, mask, combine, fdata=True, flabel=False, whiten=True)
         else: 
-            gen_dMRI_test_datasets(path, subject, nDWI, scheme, combine, fdata=True, flabel=True, whiten=True)
+            gen_dMRI_test_datasets(path, subject, nDWI, scheme, labels, dwi, mask, combine, fdata=True, flabel=True, whiten=True)
 
 if fc1d_train:
     for subject in subjects:
-        gen_dMRI_fc1d_train_datasets(path, subject, nDWI, scheme, combine, whiten=True)
+        gen_dMRI_fc1d_train_datasets(path, subject, nDWI, scheme, labels, dwi, mask, combine, whiten=True)
 
 if conv2d_train:
     for subject in subjects:
-        gen_dMRI_test_datasets(path, subject, nDWI, scheme, combine, fdata=True, flabel=True, whiten=True)
+        gen_dMRI_test_datasets(path, subject, nDWI, scheme, labels, dwi, mask, combine, fdata=True, flabel=True, whiten=True)
         gen_dMRI_conv2d_train_datasets(subject, nDWI, scheme, patch_size, label_size, base=1, test=False)
 
 if conv3d_train:
     for subject in subjects:
-        gen_dMRI_test_datasets(path, subject, nDWI, scheme, combine, fdata=True, flabel=True, whiten=True)
+        gen_dMRI_test_datasets(path, subject, nDWI, scheme, labels, dwi, mask, combine, fdata=True, flabel=True, whiten=True)
         gen_dMRI_conv3d_train_datasets(subject, nDWI, scheme, patch_size, label_size, base=1, test=False)
 
