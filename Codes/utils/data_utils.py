@@ -45,8 +45,9 @@ def gen_dMRI_fc1d_train_datasets(path, subject, ndwi, scheme, labels, dwi_path, 
             raise Exception("Mask extension {} not known", mask_extension)
         shutil.copy(path + '/' + subject + '/' + mask_path, 'datasets/mask/mask_' + subject + m_ext)
     else:
-        shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + '.nii')
-    mask = load_nii_image('datasets/mask/mask_' + subject + '.nii')
+        m_ext = '.nii'
+        shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + m_ext)
+    mask = load_nii_image('datasets/mask/mask_' + subject + m_ext)
         
     # load diffusion data
     if dwi_path is not None:
@@ -206,8 +207,9 @@ def gen_dMRI_test_datasets(path, subject, ndwi, scheme, labels, dwi_path, mask_p
             raise Exception("Mask extension {} not known", mask_extension)
         shutil.copy(path + '/' + subject + '/' + mask_path, 'datasets/mask/mask_' + subject + m_ext)
     else:
-        shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + '.nii')
-    mask = load_nii_image('datasets/mask/mask_' + subject + '.nii')
+        m_ext = '.nii'
+        shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + m_ext)
+    mask = load_nii_image('datasets/mask/mask_' + subject + m_ext)
             
     if fdata:
         # load diffusion data
