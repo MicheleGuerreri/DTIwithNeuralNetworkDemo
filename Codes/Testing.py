@@ -61,8 +61,12 @@ savename = str(nDWI)+ '-'  + scheme + '-' + args.model
 # Define the adam optimizer
 adam = Adam(lr=lr, beta_1=0.9, beta_2=0.999, epsilon=1e-8)
 
+# make sure the extension is correct
+mask_name = 'datasets/mask/mask_' + test_subject + '.nii'
+if not os.path.isfile(mask_name):
+    mask_name = mask_name + '.gz'
 # Load testing data
-mask = load_nii_image('datasets/mask/mask_' + test_subject + '.nii')
+mask = load_nii_image(mask_name)
 tdata = loadmat('datasets/data/' + test_subject + '-' + str(nDWI) + '-' + scheme + '.mat')['data']
 
 # Reshape the data to suit the model.

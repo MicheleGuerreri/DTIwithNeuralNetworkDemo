@@ -35,7 +35,15 @@ def gen_dMRI_fc1d_train_datasets(path, subject, ndwi, scheme, labels, dwi_path, 
 
     # Copy and load the mask
     if mask_path is not None:
-        shutil.copy(path + '/' + subject + '/' + mask_path, 'datasets/mask/mask_' + subject + '.nii')
+        # Make sure we use correct file extension to copy
+        mask_name, mask_extension = os.path.splitext(mask_path)
+        if mask_extension == '.nii':
+            m_ext = mask_extension
+        elif mask_extension == '.gz':
+            m_ext = '.nii' + mask_extension
+        else:
+            raise Exception("Mask extension {} not known", mask_extension)
+        shutil.copy(path + '/' + subject + '/' + mask_path, 'datasets/mask/mask_' + subject + m_ext)
     else:
         shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + '.nii')
     mask = load_nii_image('datasets/mask/mask_' + subject + '.nii')
@@ -188,7 +196,15 @@ def gen_dMRI_test_datasets(path, subject, ndwi, scheme, labels, dwi_path, mask_p
 
         # Copy and load the mask
     if mask_path is not None:
-        shutil.copy(path + '/' + subject + '/' + mask_path, 'datasets/mask/mask_' + subject + '.nii')
+        # Make sure we use correct file extension to copy
+        mask_name, mask_extension = os.path.splitext(mask_path)
+        if mask_extension == '.nii':
+            m_ext = mask_extension
+        elif mask_extension == '.gz':
+            m_ext = '.nii' + mask_extension
+        else:
+            raise Exception("Mask extension {} not known", mask_extension)
+        shutil.copy(path + '/' + subject + '/' + mask_path, 'datasets/mask/mask_' + subject + m_ext)
     else:
         shutil.copy(path + '/' + subject + '/nodif_brain_mask.nii', 'datasets/mask/mask_' + subject + '.nii')
     mask = load_nii_image('datasets/mask/mask_' + subject + '.nii')
