@@ -115,4 +115,4 @@ for i in range(ntypes):
         filename = os.path.join(nii_out, test_subject + '-' + types[i] + '-' + savename + '.nii')
 
     data[mask == 0] = 0
-    save_nii_image(filename, data, 'datasets/mask/mask_' + test_subject + '.nii', None)
+    save_nii_image(filename, data, mask_name, None)
