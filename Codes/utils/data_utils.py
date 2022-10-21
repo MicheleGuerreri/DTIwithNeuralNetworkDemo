@@ -157,7 +157,10 @@ def gen_dMRI_conv3d_train_datasets(subject, ndwi, scheme, patch_size, label_size
 
     label = loadmat('datasets/label/' + subject + '-' + str(ndwi) + '-' + scheme + '.mat')['label']
     label = label[base:-base, base:-base, base:-base, :]
-    mask = load_nii_image('datasets/mask/mask_' + subject + '.nii')
+    mask_name = 'datasets/mask/mask_' + subject + '.nii'
+    if not os.path.isfile(mask_name):
+        mask_name = mask_name + '.gz'
+    mask = load_nii_image(mask_name)
     mask = mask[base:-base, base:-base, base:-base]
     
     data = loadmat('datasets/data/' + subject + '-' + str(ndwi) + '-' + scheme + '.mat')['data']
