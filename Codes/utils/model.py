@@ -148,6 +148,7 @@ class MRIModel(object):
             os.system("mkdir " + weights_path)
 
         try:
+
             os.chdir(weights_path)
             # self._model.save_weights(weightname + '.weights')
             self._model.save_weights(weightname)
