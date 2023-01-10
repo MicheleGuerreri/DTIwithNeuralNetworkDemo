@@ -145,7 +145,8 @@ class MRIModel(object):
             #out_train = os.path.join(weights_path, weightname + '.weights')
 
         if not os.path.isdir(weights_path):
-            os.system("mkdir " + weights_path)
+            #os.system("mkdir " + weights_path)
+            os.makedirs(weights_path)
 
         try:
 
@@ -155,7 +156,8 @@ class MRIModel(object):
             os.chdir(this_dir)
         except IOError:
             # If I get error try to save results anyway...
-            os.system('mkdir weights')
+            #os.system('mkdir weights')
+            os.makedirs('weights')
             #self._model.save_weights(os.path.join('weights', weightname + '.weights'))
             self._model.save_weights(os.path.join('weights', weightname))
 

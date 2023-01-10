@@ -105,7 +105,8 @@ if out_path is not None:
 else:
     nii_out = 'nii'
 if not os.path.isdir(nii_out):
-    os.system("mkdir " + nii_out)
+    #os.system("mkdir " + nii_out)
+    os.makedirs(nii_out)
 
 for i in range(ntypes):
     data = pred[..., i]
