@@ -106,6 +106,7 @@ class MRIModel(object):
 
     __model = {
         'fc1d' : _fc1d_model,
+        'fcSmax1d': _fcSmax1d_model,
         'conv3d' : _conv3d_model,
     }
 
@@ -138,6 +139,7 @@ class MRIModel(object):
 
     __train = {
         'fc1d' : _sequence_train,
+        'fcSmax1d': _sequence_train,
         'conv3d' : _sequence_train,
     }
 
