@@ -258,6 +258,8 @@ def fetch_train_data_MultiSubject(subjects, model, ndwi, scheme, data_shuffle):
 
     if model[:4] == 'fc1d':
         dim='1d.mat'
+    if model[:8] == 'fcSmax1d':
+        dim = '1d.mat'
     if model[:6] == 'conv2d':
         dim='2d.mat'
     if model[:6] == 'conv3d':
