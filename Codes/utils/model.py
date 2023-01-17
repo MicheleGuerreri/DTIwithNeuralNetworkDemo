@@ -66,6 +66,22 @@ class MRIModel(object):
 
     """
 
+    def _fcSmax1d_model(self, patch_size):
+        """
+        Fully-connected 1d ANN model with soft matrix output layer
+        """
+        inputs = Input(shape=(self._ndwi,))
+        # Define hidden layer
+        hidden = Dense(self._kernel1, activation='relu')(inputs)
+        for i in np.arange(self._layer  - 1):
+            hidden = Dense(self._kernel1, activation='relu')(hidden)
+
+        hidden = Dropout(0.1)(hidden)
+
+        # Define output layer
+        outputs = Dense(self._ntypes, name='output', activation='softmax')(hidden)
+
+        self._model = Model(inputs=inputs, outputs=outputs)
 
 
 
@@ -205,7 +221,7 @@ def parser():
    # Training parameters
     parser.add_argument("--train", help="Train the network", action="store_true")
     parser.add_argument("--model", help="Train model",
-                        choices=['fc1d', 'conv2d', 'conv3d'], default='fc1d')
+                        choices=['fc1d', 'fcSmax1d', 'conv2d', 'conv3d'], default='fc1d')
     parser.add_argument("--layer", metavar='l', help="Number of layers", type=int, default=3)
     parser.add_argument("--lr", metavar='lr', help="Learning rates", type=float, default=0.001)
     parser.add_argument("--epoch", metavar='ep', help="Number of epoches", type=int, default=100)
